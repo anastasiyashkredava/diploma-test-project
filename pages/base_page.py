@@ -1,11 +1,15 @@
-from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.webdriver import WebDriver
+import os
+from dotenv import load_dotenv
 
 
 class BasePage:
     base_url = 'https://log.finalsurge.com/'
     page_url = None
     pix = None
+    load_dotenv()
+    email = os.getenv('email')
+    password = os.getenv('password')
 
     def __init__(self, driver: WebDriver):
         self.driver = driver

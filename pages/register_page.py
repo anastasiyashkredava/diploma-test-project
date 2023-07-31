@@ -11,6 +11,8 @@ class RegisterPage(BasePage):
     invalid_password_error_text = 'Error: *Please enter a Password value with at least one number, ' \
                                   'lower-case letter, and upper-case letter between 7 and 15 characters in length.'
     confirmation_error_text = 'Error: The passwords you entered did not match.'
+    associated_error_text = 'Error: There is already a user account associated with this Email Address.' \
+                            '  Please retrieve your password or create an account with a different address.'
 
     very_weak_passw = {'password': 'test', 'hex': '#dd514c', 'width': '16%;', 'text': 'VERY WEAK'}
     weak_passw = {'password': '123', 'hex': '#dd514c', 'width': '33%;', 'text': 'WEAK'}
@@ -63,6 +65,14 @@ class RegisterPage(BasePage):
     @property
     def password_confirmation_error_is_correct(self):
         return self.find(locs.password_error_loc).text == self.confirmation_error_text
+
+    @property
+    def associated_email_error(self):
+        return self.find(locs.password_error_loc)
+
+    @property
+    def associated_email_error_is_correct(self):
+        return self.associated_email_error.text.split() == self.associated_error_text.split()
 
     def check_password_bar_color(self, password):
         rgba = self.find(locs.bar_loc).value_of_css_property('background-color')

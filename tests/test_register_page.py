@@ -135,3 +135,17 @@ def test_very_strong_password(driver):
     assert register_page.check_password_bar_color(very_strong_password)
     assert register_page.check_password_bar_width(very_strong_password)
     assert register_page.check_password_bar_text(very_strong_password)
+
+
+def test_register_with_registered_email(driver):
+    register_page = RegisterPage(driver)
+    register_page.open_page()
+    register_page.enter_first_name("Petya")
+    register_page.enter_last_name("Petrov")
+    register_page.select_timezone(2)
+    register_page.enter_email(register_page.email)
+    register_page.enter_password(register_page.password)
+    register_page.confirm_password(register_page.password)
+    register_page.click_create_an_account_button()
+    assert register_page.associated_email_error.is_displayed()
+    assert register_page.associated_email_error_is_correct
