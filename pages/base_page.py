@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 
 class BasePage:
-    base_url = 'https://log.finalsurge.com/'
+    base_url = 'https://log.finalsurge.com'
     page_url = None
     pix = None
     load_dotenv()
