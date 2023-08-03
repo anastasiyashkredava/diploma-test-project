@@ -40,5 +40,35 @@ class TestNavigationInCalendar:
         calendar_page = CalendarPage(driver)
         calendar_page.open_page()
         calendar_page.click_month_button()
-        calendar_page.click_month(month)
-        return calendar_page.check_current_month_name_in_calendar()
+        calendar_page.select_month(month)
+        assert calendar_page.check_correct_month_is_displayed(month)
+
+    def test_switching_to_the_next_year_using_arrow(self, driver, check_user_is_logged):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        calendar_page.click_month_button()
+        calendar_page.switch_to_the_next_year()
+        calendar_page.select_month(1)
+        assert calendar_page.check_next_year_is_displayed
+
+    def test_switching_to_the_previous_year_using_arrow(self, driver, check_user_is_logged):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        calendar_page.click_month_button()
+        calendar_page.switch_to_the_previous_year()
+        calendar_page.select_month(1)
+        assert calendar_page.check_previous_year_is_displayed
+
+    @pytest.mark.parametrize(
+        'year',
+        list(range(2020, 2030))
+    )
+    def test_switching_year_using_name(self, driver, check_user_is_logged, year):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        calendar_page.click_month_button()
+        calendar_page.click_year()
+        calendar_page.select_year(year)
+        calendar_page.select_month(1)
+        sleep(3)
+        assert calendar_page.check_correct_year_is_displayed(year)

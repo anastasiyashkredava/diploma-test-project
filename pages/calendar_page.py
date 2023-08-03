@@ -45,14 +45,40 @@ class CalendarPage(BasePage):
         next_year = (first_day - datetime.timedelta(days=1)).strftime('%Y')
         return self.find(locs.month_name_loc).text == f'{next_month} {next_year}'
 
-    def check(self):
-        year = self.find(locs.year_loc)
-        year.click()
+    def click_year(self):
+        self.find(locs.year_loc).click()
 
-    def click_month(self, month: int):
-        months_list = self.find_all(locs.months_current_year_loc)[852:864]
+    def switch_to_the_next_year(self):
+        self.find(locs.next_year_loc).click()
+
+    def switch_to_the_previous_year(self):
+        self.find(locs.prev_year_loc).click()
+
+    @property
+    def check_next_year_is_displayed(self):
+        next_year = int(self.year_today) + 1
+        return self.find(locs.month_name_loc).text.split()[1] == str(next_year)
+
+    @property
+    def check_previous_year_is_displayed(self):
+        prev_year = int(self.year_today) - 1
+        return self.find(locs.month_name_loc).text.split()[1] == str(prev_year)
+
+    def select_month(self, month: int):
+        months_list = self.find_all(locs.months_loc)[852:864]
         months_list[month - 1].click()
 
-    def check_correct_month_is_displayed(self, month):
+    def check_correct_month_is_displayed(self, month: int):
         months_list = list(calendar.month_name)
         return self.find(locs.month_name_loc).text == f'{months_list[month]} {self.year_today}'
+
+    def select_year(self, year):
+        list_of_years_in_calendar = self.find_all(locs.years_loc)[853:863]
+        list_of_years = list(range(2020, 2030))
+        years_dict = {}
+        for num in range(len(list_of_years)):
+            years_dict[f'{list_of_years[num]}'] = list_of_years_in_calendar[num]
+        return years_dict[f'{year}'].click()
+
+    def check_correct_year_is_displayed(self, year):
+        return self.find(locs.month_name_loc).text.split()[1] == str(year)
