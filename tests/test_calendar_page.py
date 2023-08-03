@@ -1,6 +1,5 @@
 import pytest
 from pages.calendar_page import CalendarPage
-from time import sleep
 
 
 def test_current_date_on_top_bar(driver, check_user_is_logged):
@@ -70,5 +69,4 @@ class TestNavigationInCalendar:
         calendar_page.click_year()
         calendar_page.select_year(year)
         calendar_page.select_month(1)
-        sleep(3)
         assert calendar_page.check_correct_year_is_displayed(year)
