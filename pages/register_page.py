@@ -6,6 +6,9 @@ from selenium.webdriver.support.color import Color
 
 class RegisterPage(BasePage):
     page_url = '/register.cshtml'
+    first_name = 'Petya'
+    last_name = 'Petrov'
+    different_password = '123456aA!#'
 
     missing_error_text = 'This field is required.'
     invalid_password_error_text = 'Error: *Please enter a Password value with at least one number, ' \

@@ -1,3 +1,4 @@
+from selenium.webdriver.support.select import Select
 from pages.base_page import BasePage
 from pages.locators import calendar_page_locators as locs
 import datetime
@@ -11,6 +12,19 @@ class CalendarPage(BasePage):
     day_of_w_today = today.strftime('%A')
     month_today = today.strftime('%B')
     year_today = today.strftime('%Y')
+
+    date_field_data = f'{int(today.strftime("%m"))}/{day_of_m_today}/{year_today}'
+    time_field_data = '12:15 PM'
+    activity_data = 'Run'
+    workout_name_data = 'Marathon'
+    workout_desc_data = 'My first marathon'
+    distance = '13.00'
+    distance_units = ['mi', 'km', 'm', 'yd']
+    duration = '01:58:00'
+    pace = '9:04 min/mi'
+    how_felt = 'Great'
+    perceived_effort = '7 (Hard)'
+    post_notes = 'Well done'
 
     def check_current_date_on_top_bar(self):
         current_date = self.find(locs.current_date_loc).text
@@ -82,3 +96,105 @@ class CalendarPage(BasePage):
 
     def check_correct_year_is_displayed(self, year):
         return self.find(locs.month_name_loc).text.split()[1] == str(year)
+
+    def click_quick_add_button(self):
+        self.find(locs.quick_add_loc).click()
+
+    def wait_add_form_is_loaded(self):
+        return self.wait_until_visibility(locs.date_field_loc)
+
+    def fill_in_the_date_field(self, date):
+        date_field = self.find(locs.date_field_loc)
+        date_field.clear()
+        date_field.click()
+        date_field.send_keys(date)
+
+    def fill_in_the_time_field(self, time):
+        self.find(locs.time_field_loc).send_keys(time)
+
+    def select_activity_type(self, activity_type):
+        Select(self.find(locs.activity_type_loc)).select_by_visible_text(activity_type)
+
+    def fill_in_the_workout_name_field(self, workout_name):
+        self.find(locs.workout_name_loc).send_keys(workout_name)
+
+    def fill_in_the_workout_description_field(self, workout_desc):
+        self.find(locs.workout_desc_loc).send_keys(workout_desc)
+
+    def fill_in_the_distance_field(self, distance):
+        self.find(locs.distance_loc).send_keys(distance)
+
+    def select_distance_type(self, number):
+        Select(self.find(locs.distance_type_loc)).select_by_value(self.distance_units[number])
+
+    def fill_in_the_duration_field(self, duration):
+        self.find(locs.duration_loc).send_keys(duration)
+
+    def select_how_felt(self, how_felt):
+        Select(self.find(locs.how_feel_loc)).select_by_visible_text(how_felt)
+
+    def select_perceived_effort(self, per_effort):
+        Select(self.find(locs.perceived_effort_loc)).select_by_visible_text(per_effort)
+
+    def fill_in_the_post_notes(self, post_note):
+        self.find(locs.post_workout_notes).send_keys(post_note)
+
+    def click_add_workout_button(self):
+        self.find(locs.add_workout_button_loc).click()
+
+    @property
+    def check_workout_is_created(self):
+        return self.find(locs.activity_type_loc).is_displayed()
+
+    def view_workout_details(self):
+        self.find(locs.workout_in_calendar_2).click()
+        self.find_all(locs.workout_menu)[0].click()
+
+    def delete_a_workout(self):
+        self.find(locs.workout_in_calendar_2).click()
+        self.find_all(locs.workout_menu)[7].click()
+        self.wait_until_visibility(locs.delete_ok)
+        self.find(locs.delete_ok).click()
+
+    @property
+    def check_activity_type_data_is_correct(self):
+        return self.find(locs.details_activity_type).text == self.activity_data
+
+    @property
+    def check_workout_name_is_correct(self):
+        return self.find(locs.details_workout_name_loc).text == self.workout_name_data
+
+    @property
+    def check_workout_date_is_correct(self):
+        return self.find(locs.details_time_loc).text.split(' - ')[0] \
+               == f'{self.day_of_w_today}, {self.month_today} {self.day_of_m_today}, {self.year_today}'
+
+    @property
+    def check_workout_time_start_is_correct(self):
+        return self.find(locs.details_time_loc).text.split(' - ')[1] == self.time_field_data
+
+    @property
+    def check_workout_description_is_correct(self):
+        return self.find(locs.details_workout_desc_loc).text.split('\n')[1] == self.workout_desc_data
+
+    def check_workout_distance_is_correct(self, number):
+        return self.find(locs.details_distance_duration_loc).text.split(' ~ ')[0]\
+               == f'{self.distance} {self.distance_units[number]}'
+
+    @property
+    def check_workout_duration_is_correct(self):
+        duration = self.duration.split(':')
+        return self.find(locs.details_distance_duration_loc).text.split(' ~ ')[1]\
+               == f'{int(duration[0])}:{duration[1]}:{duration[2]}'
+
+    @property
+    def check_workout_pace_is_correct(self):
+        return self.find(locs.details_pace_loc).text == self.pace
+
+    @property
+    def check_workout_how_felt_is_correct(self):
+        return self.find(locs.details_felt_loc).text == self.how_felt
+
+    @property
+    def check_workout_perceived_effort(self):
+        return self.find(locs.details_per_effort_loc).text.split('Effort ')[1] == f'{self.perceived_effort}'

@@ -1,4 +1,6 @@
 from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import os
 from dotenv import load_dotenv
 
@@ -31,3 +33,6 @@ class BasePage:
             return self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         else:
             return self.driver.execute_script(f"window.scrollTo(0, {pix})")
+
+    def wait_until_visibility(self, locator):
+        return WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(locator))

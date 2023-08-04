@@ -1,4 +1,7 @@
 from selenium.webdriver.common.by import By
+import datetime
+
+day_of_m_today = int(datetime.date.today().strftime('%d'))
 
 current_date_loc = (By.CLASS_NAME, 'currentdatelink')
 month_button_loc = (By.CLASS_NAME, 'fc-button-month')
@@ -13,3 +16,30 @@ prev_year_loc = (By.XPATH, '(//th[@class="prev"])[215]')
 months_loc = (By.XPATH, '//div[@class="datepicker-months"]/table/tbody/tr/td/span')
 years_loc = (By.XPATH, '//div[@class="datepicker-years"]/table/tbody/tr/td/span')
 
+quick_add_loc = (By.ID, 'QuickAddToggle')
+date_field_loc = (By.ID, 'WorkoutDate')
+time_field_loc = (By.ID, 'WorkoutTime')
+time_list_loc = (By.XPATH, '//ul[@class="ui-timepicker-list picktime"]/li')
+activity_type_loc = (By.ID, 'ActivityType')
+workout_name_loc = (By.ID, 'Name')
+workout_desc_loc = (By.ID, 'Desc')
+distance_loc = (By.ID, 'Distance')
+distance_type_loc = (By.ID, 'DistType')
+duration_loc = (By.ID, 'Duration')
+how_feel_loc = (By.ID, 'HowFeel')
+perceived_effort_loc = (By.ID, 'PerEffort')
+post_workout_notes = (By.ID, 'PostDesc')
+add_workout_button_loc = (By.ID, 'saveButton')
+workout_in_calendar = (By.XPATH, f'//td[@data-day="{day_of_m_today}"]/div/div/div/div/a/div/div/div/div')
+workout_in_calendar_2 = (By.XPATH, f'//td[@data-day="{day_of_m_today}"]/div/div/div/div')
+workout_menu = (By.XPATH, f'//td[@data-day="{day_of_m_today}"]/div/div/div/div/ul/li')
+delete_ok = (By.XPATH, '//a[@data-handler="1"]')
+
+details_activity_type = (By.CLASS_NAME, 'activityTypeName')
+details_time_loc = (By.XPATH, '//div[@class="formSep"]/div[1]')
+details_workout_name_loc = (By.XPATH, '(//div[@class="formSep"]/div)[3]')
+details_workout_desc_loc = (By.CLASS_NAME, 'testme')
+details_distance_duration_loc = (By.XPATH, '//div[@class="formSep"]/span[1]')
+details_pace_loc = (By.XPATH, '//div[@class="formSep"]/span[2]')
+details_felt_loc = (By.XPATH, '(//div[@class="formSep"]/span)[3]')
+details_per_effort_loc = (By.XPATH, '(//div[@class="formSep"])[3]')

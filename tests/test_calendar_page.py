@@ -1,5 +1,6 @@
 import pytest
 from pages.calendar_page import CalendarPage
+from time import sleep
 
 
 def test_current_date_on_top_bar(driver, check_user_is_logged):
@@ -70,3 +71,36 @@ class TestNavigationInCalendar:
         calendar_page.select_year(year)
         calendar_page.select_month(1)
         assert calendar_page.check_correct_year_is_displayed(year)
+
+
+class TestWorkoutQuickAdd:
+
+    def test_filling_workout_quick_add_form(self, driver, check_user_is_logged, delete_workouts):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        calendar_page.click_quick_add_button()
+        calendar_page.wait_add_form_is_loaded()
+        calendar_page.fill_in_the_date_field(calendar_page.date_field_data)
+        calendar_page.fill_in_the_time_field(calendar_page.time_field_data)
+        calendar_page.select_activity_type(calendar_page.activity_data)
+        calendar_page.fill_in_the_workout_name_field(calendar_page.workout_name_data)
+        calendar_page.fill_in_the_workout_description_field(calendar_page.workout_desc_data)
+        calendar_page.fill_in_the_distance_field(calendar_page.distance)
+        calendar_page.select_distance_type(0)
+        calendar_page.fill_in_the_duration_field(calendar_page.duration)
+        calendar_page.select_how_felt(calendar_page.how_felt)
+        calendar_page.select_perceived_effort(calendar_page.perceived_effort)
+        calendar_page.fill_in_the_post_notes(calendar_page.post_notes)
+        calendar_page.click_add_workout_button()
+        assert calendar_page.check_workout_is_created
+        calendar_page.view_workout_details()
+        assert calendar_page.check_workout_date_is_correct
+        assert calendar_page.check_workout_time_start_is_correct
+        assert calendar_page.check_activity_type_data_is_correct
+        assert calendar_page.check_workout_name_is_correct
+        assert calendar_page.check_workout_description_is_correct
+        assert calendar_page.check_workout_distance_is_correct(0)
+        assert calendar_page.check_workout_duration_is_correct
+        assert calendar_page.check_workout_pace_is_correct
+        assert calendar_page.check_workout_how_felt_is_correct
+        assert calendar_page.check_workout_perceived_effort
