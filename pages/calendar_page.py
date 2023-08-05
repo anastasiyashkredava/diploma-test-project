@@ -6,6 +6,8 @@ import calendar
 
 
 class CalendarPage(BasePage):
+    save_to_lib_error = 'Please fix the following errors:'
+
     page_url = '/Calendar.cshtml'
     today = datetime.date.today()
     day_of_m_today = int(today.strftime('%d'))
@@ -19,12 +21,16 @@ class CalendarPage(BasePage):
     workout_name_data = 'Marathon'
     workout_desc_data = 'My first marathon'
     distance = '13.00'
+    planned_distance = '18.00'
+    planned_duration = '02:45:00'
     distance_units = ['mi', 'km', 'm', 'yd']
     duration = '01:58:00'
     pace = '9:04 min/mi'
     how_felt = 'Great'
     perceived_effort = '7 (Hard)'
     post_notes = 'Well done'
+    overall_place = '2'
+    group_place = '1'
 
     def check_current_date_on_top_bar(self):
         current_date = self.find(locs.current_date_loc).text
@@ -147,11 +153,11 @@ class CalendarPage(BasePage):
         return self.find(locs.activity_type_loc).is_displayed()
 
     def view_workout_details(self):
-        self.find(locs.workout_in_calendar_2).click()
+        self.find(locs.workout_in_calendar_loc).click()
         self.find_all(locs.workout_menu)[0].click()
 
     def delete_a_workout(self):
-        self.find(locs.workout_in_calendar_2).click()
+        self.find(locs.workout_in_calendar_loc).click()
         self.find_all(locs.workout_menu)[7].click()
         self.wait_until_visibility(locs.delete_ok)
         self.find(locs.delete_ok).click()
@@ -177,14 +183,14 @@ class CalendarPage(BasePage):
     def check_workout_description_is_correct(self):
         return self.find(locs.details_workout_desc_loc).text.split('\n')[1] == self.workout_desc_data
 
-    def check_workout_distance_is_correct(self, number):
-        return self.find(locs.details_distance_duration_loc).text.split(' ~ ')[0]\
-               == f'{self.distance} {self.distance_units[number]}'
+    def check_workout_distance_is_correct(self, units_number: int):
+        return self.find(locs.details_distance_duration_loc).text.split(' ~ ')[0] \
+               == f'{self.distance} {self.distance_units[units_number]}'
 
     @property
     def check_workout_duration_is_correct(self):
         duration = self.duration.split(':')
-        return self.find(locs.details_distance_duration_loc).text.split(' ~ ')[1]\
+        return self.find(locs.details_distance_duration_loc).text.split(' ~ ')[1] \
                == f'{int(duration[0])}:{duration[1]}:{duration[2]}'
 
     @property
@@ -198,3 +204,46 @@ class CalendarPage(BasePage):
     @property
     def check_workout_perceived_effort(self):
         return self.find(locs.details_per_effort_loc).text.split('Effort ')[1] == f'{self.perceived_effort}'
+
+    def mark_show_planned_distance_checkbox(self):
+        self.find(locs.planned_workout_loc).click()
+
+    def fill_in_the_planned_distance(self, distance):
+        self.find(locs.planned_distance_loc).send_keys(distance)
+
+    def select_planned_distance_type(self, units_number: int):
+        Select(self.find(locs.planned_dist_type_loc)).select_by_value(self.distance_units[units_number])
+
+    def fill_in_the_planned_duration(self, duration):
+        self.find(locs.planned_duration_loc).send_keys(duration)
+
+    def check_planned_distance_and_duration_correct(self, units_number: int):
+        duration_split = self.planned_duration.split(':')
+        duration = f'{int(duration_split[0])}:{duration_split[1]}:{duration_split[2]}'
+        return self.find(locs.details_planned_race_res_loc).text.split(': ')[1] \
+               == f'{self.planned_distance} {self.distance_units[units_number]} ~ {duration}'
+
+    def mark_as_race(self):
+        self.find(locs.mark_as_race_loc).click()
+
+    def fill_in_the_overall_place_field(self, place):
+        self.find(locs.overall_place_loc).send_keys(place)
+
+    def fill_in_the_age_group_place_field(self, place):
+        self.find(locs.age_group_place_loc).send_keys(place)
+
+    @property
+    def check_race_results(self):
+        result = self.find(locs.details_planned_race_res_loc).text.split(' ')
+        return result[3] == self.overall_place and result[10] == self.group_place
+
+    def mark_save_to_lib_option(self):
+        self.find(locs.save_to_lib_loc).click()
+
+    @property
+    def error(self):
+        return self.find(locs.calendar_error_loc)
+
+    @property
+    def save_to_lib_success_alert(self):
+        return self.find(locs.save_to_lib_success_alert_loc)

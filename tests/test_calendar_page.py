@@ -104,3 +104,51 @@ class TestWorkoutQuickAdd:
         assert calendar_page.check_workout_pace_is_correct
         assert calendar_page.check_workout_how_felt_is_correct
         assert calendar_page.check_workout_perceived_effort
+
+    def test_show_planned_distance_duration_option(self, driver, check_user_is_logged, delete_workouts):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        calendar_page.click_quick_add_button()
+        calendar_page.wait_add_form_is_loaded()
+        calendar_page.select_activity_type(calendar_page.activity_data)
+        calendar_page.mark_show_planned_distance_checkbox()
+        calendar_page.fill_in_the_planned_distance(calendar_page.planned_distance)
+        calendar_page.select_planned_distance_type(0)
+        calendar_page.fill_in_the_planned_duration(calendar_page.planned_duration)
+        calendar_page.click_add_workout_button()
+        calendar_page.view_workout_details()
+        assert calendar_page.check_planned_distance_and_duration_correct(0)
+
+    def test_mark_as_race_option(self, driver, check_user_is_logged, delete_workouts):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        calendar_page.click_quick_add_button()
+        calendar_page.wait_add_form_is_loaded()
+        calendar_page.select_activity_type(calendar_page.activity_data)
+        calendar_page.mark_as_race()
+        calendar_page.fill_in_the_overall_place_field(calendar_page.overall_place)
+        calendar_page.fill_in_the_age_group_place_field(calendar_page.group_place)
+        calendar_page.click_add_workout_button()
+        calendar_page.view_workout_details()
+        assert calendar_page.check_race_results
+
+    def test_save_to_library_option(self, driver, check_user_is_logged, delete_workouts):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        calendar_page.click_quick_add_button()
+        calendar_page.wait_add_form_is_loaded()
+        calendar_page.select_activity_type(calendar_page.activity_data)
+        calendar_page.fill_in_the_workout_name_field(calendar_page.workout_name_data)
+        calendar_page.mark_save_to_lib_option()
+        calendar_page.click_add_workout_button()
+        assert calendar_page.save_to_lib_success_alert.is_displayed()
+
+    def test_save_to_library_option_without_filling_required_data(self, driver, check_user_is_logged):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        calendar_page.click_quick_add_button()
+        calendar_page.wait_add_form_is_loaded()
+        calendar_page.select_activity_type(calendar_page.activity_data)
+        calendar_page.mark_save_to_lib_option()
+        calendar_page.click_add_workout_button()
+        assert calendar_page.error.is_displayed()
