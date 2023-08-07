@@ -49,3 +49,9 @@ class LogInPage(BasePage):
     @property
     def check_password_field_clean(self):
         return self.find(locs.passw_loc).get_attribute('value') == ''
+
+    def log_in(self):
+        self.enter_email(self.email)
+        self.enter_password(self.password)
+        self.find(locs.login_remember).click()
+        self.click_login_button()

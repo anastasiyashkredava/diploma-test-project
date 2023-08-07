@@ -1,6 +1,5 @@
 import pytest
 from pages.calendar_page import CalendarPage
-from time import sleep
 
 
 def test_current_date_on_top_bar(driver, check_user_is_logged):
@@ -152,3 +151,157 @@ class TestWorkoutQuickAdd:
         calendar_page.mark_save_to_lib_option()
         calendar_page.click_add_workout_button()
         assert calendar_page.error.is_displayed()
+
+
+class TestCompletionOption:
+
+    @pytest.mark.parametrize(
+        'planned_duration, duration',
+        [('30', '24'), ('30', '36')]
+    )
+    def test_default_green_completion(self, driver, check_user_is_logged, delete_workouts, planned_duration, duration):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        calendar_page.turn_on_completion_option()
+        calendar_page.click_quick_add_button()
+        calendar_page.wait_add_form_is_loaded()
+        calendar_page.select_activity_type(calendar_page.activity_data)
+        calendar_page.mark_show_planned_distance_checkbox()
+        calendar_page.fill_in_the_planned_duration(planned_duration)
+        calendar_page.fill_in_the_duration_field(duration)
+        calendar_page.click_add_workout_button()
+        assert calendar_page.check_completion_is_green
+
+    @pytest.mark.parametrize(
+        'planned_duration, duration',
+        [('30', '14'), ('30', '46')]
+    )
+    def test_default_red_completion(self, driver, check_user_is_logged, delete_workouts, planned_duration, duration):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        calendar_page.turn_on_completion_option()
+        calendar_page.click_quick_add_button()
+        calendar_page.wait_add_form_is_loaded()
+        calendar_page.select_activity_type(calendar_page.activity_data)
+        calendar_page.mark_show_planned_distance_checkbox()
+        calendar_page.fill_in_the_planned_duration(planned_duration)
+        calendar_page.fill_in_the_duration_field(duration)
+        calendar_page.click_add_workout_button()
+        assert calendar_page.check_completion_is_red
+
+    @pytest.mark.parametrize(
+        'planned_duration, duration',
+        [('30', '15'), ('30', '23'), ('30', '37'), ('30', '45')]
+    )
+    def test_default_yellow_completion(self, driver, check_user_is_logged, delete_workouts, planned_duration, duration):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        calendar_page.turn_on_completion_option()
+        calendar_page.click_quick_add_button()
+        calendar_page.wait_add_form_is_loaded()
+        calendar_page.select_activity_type(calendar_page.activity_data)
+        calendar_page.mark_show_planned_distance_checkbox()
+        calendar_page.fill_in_the_planned_duration(planned_duration)
+        calendar_page.fill_in_the_duration_field(duration)
+        calendar_page.click_add_workout_button()
+        assert calendar_page.check_completion_is_yellow
+
+    def test_grey_completion(self, driver, check_user_is_logged, delete_workouts):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        calendar_page.turn_on_completion_option()
+        calendar_page.click_quick_add_button()
+        calendar_page.wait_add_form_is_loaded()
+        calendar_page.select_activity_type(calendar_page.activity_data)
+        calendar_page.click_add_workout_button()
+        assert calendar_page.check_completion_is_grey
+
+    def test_completion_when_duration_and_distance_are_filled(self, driver, check_user_is_logged, delete_workouts):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        calendar_page.turn_on_completion_option()
+        calendar_page.click_quick_add_button()
+        calendar_page.wait_add_form_is_loaded()
+        calendar_page.select_activity_type(calendar_page.activity_data)
+        calendar_page.mark_show_planned_distance_checkbox()
+        calendar_page.fill_in_the_planned_duration('50')
+        calendar_page.fill_in_the_duration_field('50')
+        calendar_page.fill_in_the_planned_distance('50')
+        calendar_page.fill_in_the_distance_field('10')
+        calendar_page.click_add_workout_button()
+        assert calendar_page.check_completion_is_green
+
+    def test_completion_when_distance_is_filled(self, driver, check_user_is_logged, delete_workouts):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        calendar_page.turn_on_completion_option()
+        calendar_page.click_quick_add_button()
+        calendar_page.wait_add_form_is_loaded()
+        calendar_page.select_activity_type(calendar_page.activity_data)
+        calendar_page.mark_show_planned_distance_checkbox()
+        calendar_page.fill_in_the_planned_distance('50')
+        calendar_page.fill_in_the_distance_field('10')
+        calendar_page.click_add_workout_button()
+        assert calendar_page.check_completion_is_red
+
+    @pytest.mark.parametrize(
+        'planned_duration, duration',
+        [('30', '27'), ('30', '33')]
+    )
+    def test_user_green_completion(self, driver, check_user_is_logged, delete_workouts, planned_duration, duration):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        calendar_page.turn_on_completion_option()
+        calendar_page.click_quick_add_button()
+        calendar_page.wait_add_form_is_loaded()
+        calendar_page.select_activity_type(calendar_page.activity_data)
+        calendar_page.mark_show_planned_distance_checkbox()
+        calendar_page.fill_in_the_planned_duration(planned_duration)
+        calendar_page.fill_in_the_duration_field(duration)
+        calendar_page.click_add_workout_button()
+        calendar_page.click_completion_settings_button()
+        calendar_page.set_completion_settings(calendar_page.completion_user_settings)
+        assert calendar_page.check_yellow_range_was_changed(calendar_page.completion_user_settings)
+        calendar_page.update_workout_completion()
+        assert calendar_page.check_completion_is_green
+
+    @pytest.mark.parametrize(
+        'planned_duration, duration',
+        [('30', '24'), ('30', '26'), ('30', '34'), ('30', '60')]
+    )
+    def test_user_yellow_completion(self, driver, check_user_is_logged, delete_workouts, planned_duration, duration):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        calendar_page.turn_on_completion_option()
+        calendar_page.click_quick_add_button()
+        calendar_page.wait_add_form_is_loaded()
+        calendar_page.select_activity_type(calendar_page.activity_data)
+        calendar_page.mark_show_planned_distance_checkbox()
+        calendar_page.fill_in_the_planned_duration(planned_duration)
+        calendar_page.fill_in_the_duration_field(duration)
+        calendar_page.click_add_workout_button()
+        calendar_page.click_completion_settings_button()
+        calendar_page.set_completion_settings(calendar_page.completion_user_settings)
+        assert calendar_page.check_red_range_was_changed(calendar_page.completion_user_settings)
+        calendar_page.update_workout_completion()
+        assert calendar_page.check_completion_is_yellow
+
+    @pytest.mark.parametrize(
+        'planned_duration, duration',
+        [('30', '23'), ('30', '61')]
+    )
+    def test_user_red_completion(self, driver, check_user_is_logged, delete_workouts, planned_duration, duration):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        calendar_page.turn_on_completion_option()
+        calendar_page.click_quick_add_button()
+        calendar_page.wait_add_form_is_loaded()
+        calendar_page.select_activity_type(calendar_page.activity_data)
+        calendar_page.mark_show_planned_distance_checkbox()
+        calendar_page.fill_in_the_planned_duration(planned_duration)
+        calendar_page.fill_in_the_duration_field(duration)
+        calendar_page.click_add_workout_button()
+        calendar_page.click_completion_settings_button()
+        calendar_page.set_completion_settings(calendar_page.completion_user_settings)
+        calendar_page.update_workout_completion()
+        assert calendar_page.check_completion_is_red

@@ -25,10 +25,7 @@ def check_user_is_logged(driver):
     if len(welcome_message) > 0:
         pass
     else:
-        login.enter_email(login.email)
-        login.enter_password(login.password)
-        login.find(login_locs.login_remember).click()
-        login.click_login_button()
+        login.log_in()
 
 
 @pytest.fixture()
@@ -37,10 +34,7 @@ def delete_workouts(driver):
     while True:
         workouts = calendar_page.find_all(cal_locs.workout_in_calendar_loc)
         if len(workouts) > 0:
-            calendar_page.find(cal_locs.workout_in_calendar_loc).click()
-            calendar_page.find_all(cal_locs.workout_menu)[7].click()
-            calendar_page.wait_until_visibility(cal_locs.delete_ok)
-            calendar_page.find(cal_locs.delete_ok).click()
+            calendar_page.delete_a_workout()
             driver.refresh()
         else:
             break

@@ -3,6 +3,7 @@ from pages.base_page import BasePage
 from pages.locators import calendar_page_locators as locs
 import datetime
 import calendar
+from selenium.webdriver.support.color import Color
 
 
 class CalendarPage(BasePage):
@@ -31,6 +32,9 @@ class CalendarPage(BasePage):
     post_notes = 'Well done'
     overall_place = '2'
     group_place = '1'
+
+    completion_default_settings = {'green_start': 80, 'green_end': 120, 'yellow_low': 50, 'yellow_high': 150}
+    completion_user_settings = {'green_start': 90, 'green_end': 110, 'yellow_low': 80, 'yellow_high': 200}
 
     def check_current_date_on_top_bar(self):
         current_date = self.find(locs.current_date_loc).text
@@ -150,7 +154,7 @@ class CalendarPage(BasePage):
 
     @property
     def check_workout_is_created(self):
-        return self.find(locs.activity_type_loc).is_displayed()
+        return self.find(locs.workout_in_calendar_loc).is_displayed()
 
     def view_workout_details(self):
         self.find(locs.workout_in_calendar_loc).click()
@@ -247,3 +251,66 @@ class CalendarPage(BasePage):
     @property
     def save_to_lib_success_alert(self):
         return self.find(locs.save_to_lib_success_alert_loc)
+
+    def turn_on_completion_option(self):
+        completion_button = self.find(locs.completion_button_loc)
+        rgba = completion_button.value_of_css_property('background-color')
+        button_color_hex = Color.from_string(rgba).hex
+        if button_color_hex == '#368ca9':
+            pass
+        else:
+            completion_button.click()
+
+    def get_color(self, loc):
+        rgba = self.find(loc).value_of_css_property('background-color')
+        return Color.from_string(rgba).hex
+
+    @property
+    def check_completion_is_green(self):
+        return self.get_color(locs.workout_color_loc) == '#68ae15'
+
+    @property
+    def check_completion_is_red(self):
+        return self.get_color(locs.workout_color_loc) == '#bd1818'
+
+    @property
+    def check_completion_is_yellow(self):
+        return self.get_color(locs.workout_color_loc) == '#eabd07'
+
+    @property
+    def check_completion_is_grey(self):
+        return self.get_color(locs.workout_color_loc) == '#8c8c8c'
+
+    def click_completion_settings_button(self):
+        self.find(locs.completion_settings_loc).click()
+
+    def set_completion_settings(self, dict_settings: dict):
+        self.driver.switch_to.frame("ColorCompletioniFrame")
+        low_green = self.find(locs.completion_green_settings_1_loc)
+        low_green.clear()
+        low_green.send_keys(str(dict_settings['green_start']))
+        high_green = self.find(locs.completion_green_settings_2_loc)
+        high_green.clear()
+        high_green.send_keys(str(dict_settings['green_end']))
+        low_yellow = self.find(locs.completion_yellow_settings_1_loc)
+        low_yellow.clear()
+        low_yellow.send_keys(str(dict_settings['yellow_low']))
+        high_yellow = self.find(locs.completion_yellow_settings_2_loc)
+        high_yellow.clear()
+        high_yellow.send_keys(str(dict_settings['yellow_high']))
+
+    def check_yellow_range_was_changed(self, dict_settings: dict):
+        yellow_range_end = self.find(locs.completion_yellow_ending_loc)
+        yellow_range_start = self.find(locs.completion_yellow_starting_loc)
+        return yellow_range_end.text == f'{dict_settings["green_start"] - 1}%' and yellow_range_start.text \
+               == f'{dict_settings["green_end"] + 1}%'
+
+    def check_red_range_was_changed(self, dict_settings: dict):
+        red_range_low = self.find(locs.completion_red_low_loc)
+        red_range_high = self.find(locs.completion_red_high_loc)
+        return red_range_low.text == f'{dict_settings["yellow_low"]}%' and red_range_high.text \
+               == f'{dict_settings["yellow_high"]}%'
+
+    def update_workout_completion(self):
+        self.find(locs.update_completion_loc).click()
+        self.driver.refresh()
