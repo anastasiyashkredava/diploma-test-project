@@ -55,3 +55,7 @@ class LogInPage(BasePage):
         self.enter_password(self.password)
         self.find(locs.login_remember).click()
         self.click_login_button()
+
+    def log_out(self):
+        self.find(locs.logout_loc).click()
+        self.find(locs.signup_loc).click()

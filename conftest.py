@@ -29,6 +29,16 @@ def check_user_is_logged(driver):
 
 
 @pytest.fixture()
+def check_user_is_not_logged(driver):
+    login = LogInPage(driver)
+    base = CalendarPage(driver)
+    base.open_page()
+    welcome_message = login.find_all(login_locs.welcome_loc)
+    if len(welcome_message) > 0:
+        login.log_out()
+
+
+@pytest.fixture()
 def delete_workouts(driver):
     calendar_page = CalendarPage(driver)
     while True:

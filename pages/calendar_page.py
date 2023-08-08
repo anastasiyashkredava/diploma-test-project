@@ -89,7 +89,7 @@ class CalendarPage(BasePage):
         return self.find(locs.month_name_loc).text.split()[1] == str(prev_year)
 
     def select_month(self, month: int):
-        months_list = self.find_all(locs.months_loc)[852:864]
+        months_list = self.find_all(locs.months_loc)[996:1009]
         months_list[month - 1].click()
 
     def check_correct_month_is_displayed(self, month: int):
@@ -97,7 +97,7 @@ class CalendarPage(BasePage):
         return self.find(locs.month_name_loc).text == f'{months_list[month]} {self.year_today}'
 
     def select_year(self, year):
-        list_of_years_in_calendar = self.find_all(locs.years_loc)[853:863]
+        list_of_years_in_calendar = self.find_all(locs.years_loc)[997:1008]
         list_of_years = list(range(2020, 2030))
         years_dict = {}
         for num in range(len(list_of_years)):
@@ -195,7 +195,7 @@ class CalendarPage(BasePage):
     def check_workout_duration_is_correct(self):
         duration = self.duration.split(':')
         return self.find(locs.details_distance_duration_loc).text.split(' ~ ')[1] \
-               == f'{int(duration[0])}:{duration[1]}:{duration[2]}'
+            == f'{int(duration[0])}:{duration[1]}:{duration[2]}'
 
     @property
     def check_workout_pace_is_correct(self):
@@ -225,7 +225,7 @@ class CalendarPage(BasePage):
         duration_split = self.planned_duration.split(':')
         duration = f'{int(duration_split[0])}:{duration_split[1]}:{duration_split[2]}'
         return self.find(locs.details_planned_race_res_loc).text.split(': ')[1] \
-               == f'{self.planned_distance} {self.distance_units[units_number]} ~ {duration}'
+            == f'{self.planned_distance} {self.distance_units[units_number]} ~ {duration}'
 
     def mark_as_race(self):
         self.find(locs.mark_as_race_loc).click()
@@ -285,6 +285,7 @@ class CalendarPage(BasePage):
         self.find(locs.completion_settings_loc).click()
 
     def set_completion_settings(self, dict_settings: dict):
+        self.click_completion_settings_button()
         self.driver.switch_to.frame("ColorCompletioniFrame")
         low_green = self.find(locs.completion_green_settings_1_loc)
         low_green.clear()
@@ -303,13 +304,13 @@ class CalendarPage(BasePage):
         yellow_range_end = self.find(locs.completion_yellow_ending_loc)
         yellow_range_start = self.find(locs.completion_yellow_starting_loc)
         return yellow_range_end.text == f'{dict_settings["green_start"] - 1}%' and yellow_range_start.text \
-               == f'{dict_settings["green_end"] + 1}%'
+            == f'{dict_settings["green_end"] + 1}%'
 
     def check_red_range_was_changed(self, dict_settings: dict):
         red_range_low = self.find(locs.completion_red_low_loc)
         red_range_high = self.find(locs.completion_red_high_loc)
         return red_range_low.text == f'{dict_settings["yellow_low"]}%' and red_range_high.text \
-               == f'{dict_settings["yellow_high"]}%'
+            == f'{dict_settings["yellow_high"]}%'
 
     def update_workout_completion(self):
         self.find(locs.update_completion_loc).click()

@@ -1,14 +1,15 @@
+import allure
 import pytest
 from pages.calendar_page import CalendarPage
 
 
-def test_current_date_on_top_bar(driver, check_user_is_logged):
-    calendar_page = CalendarPage(driver)
-    calendar_page.open_page()
-    assert calendar_page.check_current_date_on_top_bar()
-
-
+@allure.feature('Navigation in the Calendar')
 class TestNavigationInCalendar:
+
+    def test_current_date(self, driver, check_user_is_logged):
+        calendar_page = CalendarPage(driver)
+        calendar_page.open_page()
+        assert calendar_page.check_current_date_on_top_bar()
 
     def test_month_mode_of_calendar(self, driver, check_user_is_logged):
         calendar_page = CalendarPage(driver)
@@ -31,6 +32,7 @@ class TestNavigationInCalendar:
         calendar_page.switch_to_the_previous_month()
         assert calendar_page.check_previous_month_is_displayed
 
+    @allure.story('Switching to the necessary month selecting in in the calendar')
     @pytest.mark.parametrize(
         'month',
         range(1, 13)
@@ -58,6 +60,7 @@ class TestNavigationInCalendar:
         calendar_page.select_month(1)
         assert calendar_page.check_previous_year_is_displayed
 
+    @allure.story('Switching to the necessary year selecting it in the calendar')
     @pytest.mark.parametrize(
         'year',
         list(range(2020, 2030))
@@ -72,6 +75,7 @@ class TestNavigationInCalendar:
         assert calendar_page.check_correct_year_is_displayed(year)
 
 
+@allure.feature('Adding Workout using Quick Add')
 class TestWorkoutQuickAdd:
 
     def test_filling_workout_quick_add_form(self, driver, check_user_is_logged, delete_workouts):
@@ -153,8 +157,10 @@ class TestWorkoutQuickAdd:
         assert calendar_page.error.is_displayed()
 
 
+@allure.feature('Completion Option')
 class TestCompletionOption:
 
+    @allure.story('Workout color with default completion settings')
     @pytest.mark.parametrize(
         'planned_duration, duration',
         [('30', '24'), ('30', '36')]
@@ -170,8 +176,11 @@ class TestCompletionOption:
         calendar_page.fill_in_the_planned_duration(planned_duration)
         calendar_page.fill_in_the_duration_field(duration)
         calendar_page.click_add_workout_button()
+        calendar_page.set_completion_settings(calendar_page.completion_default_settings)
+        calendar_page.update_workout_completion()
         assert calendar_page.check_completion_is_green
 
+    @allure.story('Workout color with default completion settings')
     @pytest.mark.parametrize(
         'planned_duration, duration',
         [('30', '14'), ('30', '46')]
@@ -187,8 +196,11 @@ class TestCompletionOption:
         calendar_page.fill_in_the_planned_duration(planned_duration)
         calendar_page.fill_in_the_duration_field(duration)
         calendar_page.click_add_workout_button()
+        calendar_page.set_completion_settings(calendar_page.completion_default_settings)
+        calendar_page.update_workout_completion()
         assert calendar_page.check_completion_is_red
 
+    @allure.story('Workout color with default completion settings')
     @pytest.mark.parametrize(
         'planned_duration, duration',
         [('30', '15'), ('30', '23'), ('30', '37'), ('30', '45')]
@@ -204,8 +216,11 @@ class TestCompletionOption:
         calendar_page.fill_in_the_planned_duration(planned_duration)
         calendar_page.fill_in_the_duration_field(duration)
         calendar_page.click_add_workout_button()
+        calendar_page.set_completion_settings(calendar_page.completion_default_settings)
+        calendar_page.update_workout_completion()
         assert calendar_page.check_completion_is_yellow
 
+    @allure.story('Workout color with default completion settings')
     def test_grey_completion(self, driver, check_user_is_logged, delete_workouts):
         calendar_page = CalendarPage(driver)
         calendar_page.open_page()
@@ -229,6 +244,8 @@ class TestCompletionOption:
         calendar_page.fill_in_the_planned_distance('50')
         calendar_page.fill_in_the_distance_field('10')
         calendar_page.click_add_workout_button()
+        calendar_page.set_completion_settings(calendar_page.completion_default_settings)
+        calendar_page.update_workout_completion()
         assert calendar_page.check_completion_is_green
 
     def test_completion_when_distance_is_filled(self, driver, check_user_is_logged, delete_workouts):
@@ -242,8 +259,11 @@ class TestCompletionOption:
         calendar_page.fill_in_the_planned_distance('50')
         calendar_page.fill_in_the_distance_field('10')
         calendar_page.click_add_workout_button()
+        calendar_page.set_completion_settings(calendar_page.completion_default_settings)
+        calendar_page.update_workout_completion()
         assert calendar_page.check_completion_is_red
 
+    @allure.story('Workout color with user completion settings')
     @pytest.mark.parametrize(
         'planned_duration, duration',
         [('30', '27'), ('30', '33')]
@@ -259,12 +279,12 @@ class TestCompletionOption:
         calendar_page.fill_in_the_planned_duration(planned_duration)
         calendar_page.fill_in_the_duration_field(duration)
         calendar_page.click_add_workout_button()
-        calendar_page.click_completion_settings_button()
         calendar_page.set_completion_settings(calendar_page.completion_user_settings)
         assert calendar_page.check_yellow_range_was_changed(calendar_page.completion_user_settings)
         calendar_page.update_workout_completion()
         assert calendar_page.check_completion_is_green
 
+    @allure.story('Workout color with user completion settings')
     @pytest.mark.parametrize(
         'planned_duration, duration',
         [('30', '24'), ('30', '26'), ('30', '34'), ('30', '60')]
@@ -280,12 +300,12 @@ class TestCompletionOption:
         calendar_page.fill_in_the_planned_duration(planned_duration)
         calendar_page.fill_in_the_duration_field(duration)
         calendar_page.click_add_workout_button()
-        calendar_page.click_completion_settings_button()
         calendar_page.set_completion_settings(calendar_page.completion_user_settings)
         assert calendar_page.check_red_range_was_changed(calendar_page.completion_user_settings)
         calendar_page.update_workout_completion()
         assert calendar_page.check_completion_is_yellow
 
+    @allure.story('Workout color with user completion settings')
     @pytest.mark.parametrize(
         'planned_duration, duration',
         [('30', '23'), ('30', '61')]
@@ -301,7 +321,6 @@ class TestCompletionOption:
         calendar_page.fill_in_the_planned_duration(planned_duration)
         calendar_page.fill_in_the_duration_field(duration)
         calendar_page.click_add_workout_button()
-        calendar_page.click_completion_settings_button()
         calendar_page.set_completion_settings(calendar_page.completion_user_settings)
         calendar_page.update_workout_completion()
         assert calendar_page.check_completion_is_red
